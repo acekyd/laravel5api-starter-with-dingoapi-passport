@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Validator;
-use Config;
+use Config, Cookie;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
@@ -31,12 +31,11 @@ class AuthController extends ApiController
     public function __construct(Application $app) {
 
         $this->apiConsumer = $app->make('apiconsumer');
-        $this->cookie = $app->make('cookie');
     }
 
     public function login(LoginUserRequest $request)
     {
-        return response()->json($this->attemptLogin($request->email, $request->password));
+        return $this->attemptLogin($request->email, $request->password);
     }
 
     public function signup(SignupUserRequest $request)
@@ -51,7 +50,7 @@ class AuthController extends ApiController
             return $this->response->errorInternal("Could not create user");
         }
 
-       return response()->json($this->attemptLogin($request->email, $request->password));
+        return $this->attemptLogin($request->email, $request->password);
     }
 
     /**
@@ -65,10 +64,14 @@ class AuthController extends ApiController
         $user = User::where('email', $email)->first();
 
         if (!is_null($user)) {
-            return $this->proxy('password', [
+            $login = $this->proxy('password', [
                 'username' => $email,
                 'password' => $password
             ]);
+
+            return response()->json($login)->cookie(
+                $this->cookie
+            );
         }
 
         //throw new InvalidCredentialsException();
@@ -100,7 +103,7 @@ class AuthController extends ApiController
         $data = json_decode($response->getContent());
 
         // Create a refresh token cookie
-        $this->cookie->queue(
+        $this->cookie = Cookie::make(
             self::REFRESH_TOKEN,
             $data->refresh_token,
             864000, // 10 days

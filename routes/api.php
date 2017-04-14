@@ -18,6 +18,9 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
 	//Unauthenticated routes.
 	$api->get('/users', function (Request $request) { return \App\User::all(); });
+	$api->post('/login', 'App\Http\Controllers\AuthController@login');
+	$api->post('/signup', 'App\Http\Controllers\AuthController@signup');
+
 
 	$api->group(['middleware' => 'auth:api'], function ($api) {
         // Endpoints registered here will have the "auth:api" middleware applied.
