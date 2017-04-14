@@ -25,20 +25,13 @@ class AuthController extends ApiController
 
     private $apiConsumer;
 
-    private $auth;
-
     private $cookie;
-
-    private $db;
 
 
     public function __construct(Application $app) {
 
         $this->apiConsumer = $app->make('apiconsumer');
-        $this->auth = $app->make('auth');
         $this->cookie = $app->make('cookie');
-        $this->db = $app->make('db');
-        $this->request = $app->make('request');
     }
 
     public function login(LoginUserRequest $request)

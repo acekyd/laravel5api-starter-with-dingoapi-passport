@@ -169,6 +169,8 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
+        Optimus\ApiConsumer\Provider\LaravelServiceProvider::class,
+
 
         /*
          * Application Service Providers...
